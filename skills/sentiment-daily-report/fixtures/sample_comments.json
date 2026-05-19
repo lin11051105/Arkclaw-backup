@@ -1,0 +1,179 @@
+{
+  "window": {
+    "start": "2026-04-27T18:00:00+08:00",
+    "end": "2026-04-28T18:00:00+08:00"
+  },
+  "comments": [
+    {
+      "id": "c001",
+      "creative_id": "ad_111",
+      "creative_name": "ROK_FB_RU_battle_v3",
+      "language": "ru",
+      "text": "Игра выглядит классно, очень нравится графика!",
+      "sentiment": "positive",
+      "theme": "graphics_praise",
+      "likes": 3,
+      "replies": 0,
+      "created_at": "2026-04-27T19:30:00+08:00"
+    },
+    {
+      "id": "c002",
+      "creative_id": "ad_111",
+      "creative_name": "ROK_FB_RU_battle_v3",
+      "language": "ru",
+      "text": "Реклама обманывает, в игре нет такого сражения",
+      "sentiment": "negative",
+      "theme": "ad_overpromise",
+      "likes": 22,
+      "replies": 5,
+      "created_at": "2026-04-27T20:00:00+08:00"
+    },
+    {
+      "id": "c003",
+      "creative_id": "ad_222",
+      "creative_name": "ROK_FB_EN_clash_v1",
+      "language": "en",
+      "text": "Misleading ad. The actual game is nothing like this video.",
+      "sentiment": "negative",
+      "theme": "ad_overpromise",
+      "likes": 1,
+      "replies": 0,
+      "created_at": "2026-04-27T22:00:00+08:00"
+    },
+    {
+      "id": "c004",
+      "creative_id": "ad_222",
+      "creative_name": "ROK_FB_EN_clash_v1",
+      "language": "en",
+      "text": "How do I download this?",
+      "sentiment": "neutral",
+      "theme": "download_question",
+      "likes": 0,
+      "replies": 0,
+      "created_at": "2026-04-27T23:00:00+08:00"
+    },
+    {
+      "id": "c005",
+      "creative_id": "ad_333",
+      "creative_name": "ROK_FB_ES_burst_v2",
+      "language": "es",
+      "text": "Muy buen juego, lo recomiendo",
+      "sentiment": "positive",
+      "theme": "general_praise",
+      "likes": 2,
+      "replies": 1,
+      "created_at": "2026-04-28T05:00:00+08:00"
+    },
+    {
+      "id": "c006",
+      "creative_id": "ad_111",
+      "creative_name": "ROK_FB_RU_battle_v3",
+      "language": "ru",
+      "text": "Это реклама врет, такого нет в игре",
+      "sentiment": "negative",
+      "theme": "ad_overpromise",
+      "likes": 4,
+      "replies": 2,
+      "created_at": "2026-04-28T08:00:00+08:00"
+    },
+    {
+      "id": "c007",
+      "creative_id": "ad_111",
+      "creative_name": "ROK_FB_RU_battle_v3",
+      "language": "ru",
+      "text": "Графика плохая",
+      "sentiment": "negative",
+      "theme": "graphics_complaint",
+      "likes": 0,
+      "replies": 0,
+      "created_at": "2026-04-28T09:00:00+08:00"
+    },
+    {
+      "id": "c008",
+      "creative_id": "ad_111",
+      "creative_name": "ROK_FB_RU_battle_v3",
+      "language": "ru",
+      "text": "Плохая игра",
+      "sentiment": "negative",
+      "theme": "general_complaint",
+      "likes": 0,
+      "replies": 0,
+      "created_at": "2026-04-28T09:10:00+08:00"
+    },
+    {
+      "id": "c009",
+      "creative_id": "ad_111",
+      "creative_name": "ROK_FB_RU_battle_v3",
+      "language": "ru",
+      "text": "Не запускается",
+      "sentiment": "negative",
+      "theme": "technical_issue",
+      "likes": 1,
+      "replies": 0,
+      "created_at": "2026-04-28T09:20:00+08:00"
+    },
+    {
+      "id": "c010",
+      "creative_id": "ad_111",
+      "creative_name": "ROK_FB_RU_battle_v3",
+      "language": "ru",
+      "text": "Совсем не такая игра",
+      "sentiment": "negative",
+      "theme": "ad_overpromise",
+      "likes": 1,
+      "replies": 0,
+      "created_at": "2026-04-28T09:30:00+08:00"
+    },
+    {
+      "id": "c011",
+      "creative_id": "ad_111",
+      "creative_name": "ROK_FB_RU_battle_v3",
+      "language": "ru",
+      "text": "Скучно",
+      "sentiment": "negative",
+      "theme": "general_complaint",
+      "likes": 0,
+      "replies": 0,
+      "created_at": "2026-04-28T09:40:00+08:00"
+    },
+    {
+      "id": "c012",
+      "creative_id": "ad_111",
+      "creative_name": "ROK_FB_RU_battle_v3",
+      "language": "ru",
+      "text": "Реклама обманула",
+      "sentiment": "negative",
+      "theme": "ad_overpromise",
+      "likes": 0,
+      "replies": 0,
+      "created_at": "2026-04-28T09:50:00+08:00"
+    },
+    {
+      "id": "c013",
+      "creative_id": "ad_111",
+      "creative_name": "ROK_FB_RU_battle_v3",
+      "language": "ru",
+      "text": "Лагает",
+      "sentiment": "negative",
+      "theme": "technical_issue",
+      "likes": 0,
+      "replies": 0,
+      "created_at": "2026-04-28T10:00:00+08:00"
+    },
+    {
+      "id": "c014",
+      "creative_id": "ad_111",
+      "creative_name": "ROK_FB_RU_battle_v3",
+      "language": "ru",
+      "text": "Не такая",
+      "sentiment": "negative",
+      "theme": "ad_overpromise",
+      "likes": 0,
+      "replies": 0,
+      "created_at": "2026-04-28T10:10:00+08:00"
+    }
+  ],
+  "baseline_7d_avg_total": 12.0,
+  "baseline_7d_avg_negative_pct": 0.30,
+  "yesterday_total": 11
+}

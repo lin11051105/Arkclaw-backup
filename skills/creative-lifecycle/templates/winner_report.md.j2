@@ -1,0 +1,38 @@
+# {{ project }} 爆款素材检测报告
+
+- 日期: {{ date }}
+- 目标 CPI: {{ target_cpi }}
+- 目标 ROI: {{ target_roi }}
+
+## 爆款素材
+
+{% if winners %}
+| 素材ID | 素材名称 | 累计消耗 | 消耗阈值 | 素材类型 |
+|--------|---------|---------|---------|---------|
+{% for w in winners %}
+| {{ w.material_id }} | {{ w.creative_name or w.material_name or '' }} | ${{ "%.0f" | format(w.total_spend) }} | ${{ "%.0f" | format(w.spend_threshold) }} | {{ w.creative_type }} |
+{% endfor %}
+{% else %}
+当前无素材达到爆款标准。
+{% endif %}
+
+## 库存状态
+
+| 指标 | 数值 | 安全线 | 状态 |
+|------|------|-------|------|
+| 可用素材数 | {{ inventory.usable_count }} | {{ inventory.safety_line }} | {{ inventory.status }} |
+| 爆款数量 | {{ winner_summary.winner_count }} | {{ winner_summary.min_hot_count }} | {{ winner_summary.status }} |
+
+{% if inventory_by_region %}
+## 分地区表现
+
+| 地区 | 消耗 | 安装 | CPI | ROI |
+|------|------|------|-----|-----|
+{% for r in inventory_by_region %}
+| {{ r.region }} | {{ "%.0f" | format(r.spend) }} | {{ r.installs }} | {{ "%.2f" | format(r.cpi) }} | {{ "%.4f" | format(r.roi) }} |
+{% endfor %}
+{% endif %}
+
+## 汇总
+
+{{ conclusion }}

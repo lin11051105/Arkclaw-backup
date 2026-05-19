@@ -1,0 +1,28 @@
+{
+  "ROK": {
+    "name": "万国觉醒",
+    "facebook": {
+      "target_cpi": 4.0,
+      "target_roi": 2.5,
+      "app_id": "123456789",
+      "page_id": "987654321"
+    },
+    "countries": {
+      "tier1": ["US", "CA", "GB", "DE", "FR", "AU", "JP", "KR"],
+      "tier2": ["BR", "MX", "IN", "ID", "TH", "VN", "PH", "TW"]
+    }
+  },
+  "AFK": {
+    "name": "剑与远征",
+    "facebook": {
+      "target_cpi": 3.5,
+      "target_roi": 3.0,
+      "app_id": "111222333",
+      "page_id": "444555666"
+    },
+    "countries": {
+      "tier1": ["US", "CA", "GB", "DE", "FR"],
+      "tier2": ["BR", "MX", "IN", "ID", "TH"]
+    }
+  }
+}

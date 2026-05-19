@@ -1,0 +1,42 @@
+📊 {{ meta.product }} 广告舆情日报 · {{ meta.window_end[:10] }}
+
+【量级】24h FB评论 {{ module_1_volume.totals.total }}条（积极{{ "%.0f"|format(module_1_volume.totals.positive / module_1_volume.totals.total * 100) if module_1_volume.totals.total > 0 else 0 }}% / 中性{{ "%.0f"|format(module_1_volume.totals.neutral / module_1_volume.totals.total * 100) if module_1_volume.totals.total > 0 else 0 }}% / 负面{{ "%.0f"|format(module_1_volume.totals.negative / module_1_volume.totals.total * 100) if module_1_volume.totals.total > 0 else 0 }}%）
+{%- if module_1_volume.totals.vs_7d_avg_pct is not none %}
+负面 vs 7日均值：{{ "+" if module_1_volume.totals.vs_7d_avg_pct > 0 else "" }}{{ module_1_volume.totals.vs_7d_avg_pct }}%
+{%- endif %}
+
+{%- if module_2_qualitative.alerts %}
+
+【⚠ 预警】{{ module_2_qualitative.alerts | length }}条
+{%- for a in module_2_qualitative.alerts %}
+{%- if a.trigger_type == 'A_creative_negative_burst' %}
+• 素材 {{ a.creative_id }} | 24h负面{{ a.evidence.negative_count }}条{% if a.evidence.near_threshold %}（接近阈值）{% endif %}
+{%- elif a.trigger_type == 'B_high_engagement_comment' %}
+• 素材 {{ a.creative_id }} | 单条评论高传播（点赞{{ a.evidence.likes }}）
+{%- endif %}
+{%- endfor %}
+{%- else %}
+
+今日无重大舆情
+{%- endif %}
+
+{%- if module_5_actions.pause %}
+
+【🔴 建议立即暂停】
+{%- for a in module_5_actions.pause %}
+• {{ a.short_name or a.creative_id }}（{{ a.reason }}）
+{%- endfor %}
+{%- endif %}
+
+{%- if module_5_actions.scale %}
+
+【⭐ 建议扩量】
+{%- for a in module_5_actions.scale %}
+• {{ a.short_name or a.creative_id }}（{{ a.reason }}）
+{%- endfor %}
+{%- endif %}
+
+{%- if module_4_tracking.entries %}
+
+【持续跟踪中】{{ module_4_tracking.entries | length }}条素材，详见文档
+{%- endif %}

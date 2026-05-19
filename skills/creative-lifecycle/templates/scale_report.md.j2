@@ -1,0 +1,48 @@
+# {{ project }} 扩量候选报告
+
+- 日期: {{ date }}
+- 目标 CPI: {{ target_cpi }}
+- 目标 ROI: {{ target_roi }}
+- P80 CTR 基线: {{ "%.4f" | format(p80_ctr_baseline) }}
+
+## 量级候选（C01）
+
+{% if volume_candidates %}
+| 素材ID | 素材名称 | CTR | CPI | 日均消耗 | 判定 |
+|--------|---------|-----|-----|---------|------|
+{% for v in volume_candidates %}
+| {{ v.material_id }} | {{ v.short_name or v.material_name }} | {{ "%.4f" | format(v.ctr) }} | {{ "%.2f" | format(v.cpi) }} | {{ "%.2f" | format(v.daily_spend) }} | 候选 |
+{% endfor %}
+{% else %}
+无量级候选素材。
+{% endif %}
+
+## 付费候选（C02）
+
+{% if paying_candidates %}
+| 素材ID | 素材名称 | ROI | CPI | 判定 |
+|--------|---------|-----|-----|------|
+{% for p in paying_candidates %}
+| {{ p.material_id }} | {{ p.short_name or p.material_name }} | {{ "%.4f" | format(p.roi) }} | {{ "%.2f" | format(p.cpi) }} | 候选 |
+{% endfor %}
+{% else %}
+无付费候选素材。
+{% endif %}
+
+## 未达标素材
+
+{% if non_candidates %}
+| 素材ID | 素材名称 | 原因 |
+|--------|---------|------|
+{% for n in non_candidates %}
+| {{ n.material_id }} | {{ n.short_name or n.material_name }} | {{ n.reason }} |
+{% endfor %}
+{% else %}
+全部素材均达标。
+{% endif %}
+
+## 汇总
+
+- 量级候选: {{ volume_candidates | length }}
+- 付费候选: {{ paying_candidates | length }}
+- 未达标: {{ non_candidates | length }}

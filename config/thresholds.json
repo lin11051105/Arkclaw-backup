@@ -1,0 +1,28 @@
+{
+  "campaign_decay": {
+    "consecutive_days": 3,
+    "cpi_above_target_pct": 1.25,
+    "description": "Campaign 连续 N 天 CPI 超过目标 × 125% 触发衰退"
+  },
+  "adset_decay": {
+    "consecutive_days": 3,
+    "cpi_above_target_pct": 1.25,
+    "roi_below_target_pct": 0.80,
+    "description": "AdSet 连续 N 天 CPI 超标且 ROI < 目标 × 80% 触发衰退"
+  },
+  "high_risk_spend": {
+    "daily_spend_threshold": 500,
+    "roi_below_target_pct": 0.80,
+    "description": "日耗超过 $500 且 ROI < 目标 × 80% 触发高风险预警"
+  },
+  "budget_adjustment": {
+    "auto_max_reduction_pct": 0.30,
+    "min_age_hours_ios": 72,
+    "description": "自动降预算最大 30%，iOS SKAN 保护期 72 小时"
+  },
+  "silent_period": {
+    "start_hour": 22,
+    "end_hour": 9,
+    "description": "22:00-09:00 静默期，只执行管线和余额检查"
+  }
+}

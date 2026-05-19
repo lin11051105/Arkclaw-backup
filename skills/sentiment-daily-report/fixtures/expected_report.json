@@ -1,0 +1,141 @@
+{
+  "meta": {
+    "product": "Pgame",
+    "channel": "facebook",
+    "window_start": "2026-04-27T18:00:00+08:00",
+    "window_end": "2026-04-28T18:00:00+08:00",
+    "generated_at": "2026-04-28T18:00:00+08:00",
+    "doc_url": null,
+    "degradation_flag": null
+  },
+  "module_1_volume": {
+    "totals": {
+      "total": 14,
+      "positive": 2,
+      "neutral": 1,
+      "negative": 11,
+      "vs_yesterday_pct": 27.27,
+      "vs_7d_avg_pct": 16.67
+    },
+    "by_language": [
+      {
+        "language": "ru",
+        "total": 11,
+        "positive": 1,
+        "neutral": 0,
+        "negative": 10,
+        "negative_rate": 0.9091,
+        "vs_7d_avg_pct": null
+      },
+      {
+        "language": "en",
+        "total": 2,
+        "positive": 0,
+        "neutral": 1,
+        "negative": 1,
+        "negative_rate": 0.5,
+        "vs_7d_avg_pct": null
+      },
+      {
+        "language": "es",
+        "total": 1,
+        "positive": 1,
+        "neutral": 0,
+        "negative": 0,
+        "negative_rate": 0.0,
+        "vs_7d_avg_pct": null
+      }
+    ]
+  },
+  "module_2_qualitative": {
+    "positive_themes": [
+      {"theme": "graphics_praise", "count": 1, "source_creatives": ["ad_111"]},
+      {"theme": "general_praise", "count": 1, "source_creatives": ["ad_333"]}
+    ],
+    "neutral_themes": [
+      {"theme": "download_question", "count": 1, "source_creatives": ["ad_222"]}
+    ],
+    "negative_themes": [
+      {
+        "category": "ad_overpromise",
+        "count": 6,
+        "source_creatives": ["ad_111", "ad_222"],
+        "main_languages": ["en", "ru"],
+        "severity": "high"
+      },
+      {
+        "category": "general_complaint",
+        "count": 2,
+        "source_creatives": ["ad_111"],
+        "main_languages": ["ru"],
+        "severity": "low"
+      },
+      {
+        "category": "technical_issue",
+        "count": 2,
+        "source_creatives": ["ad_111"],
+        "main_languages": ["ru"],
+        "severity": "low"
+      },
+      {
+        "category": "graphics_complaint",
+        "count": 1,
+        "source_creatives": ["ad_111"],
+        "main_languages": ["ru"],
+        "severity": "low"
+      }
+    ],
+    "alerts": [
+      {
+        "trigger_type": "A_creative_negative_burst",
+        "creative_id": "ad_111",
+        "evidence": {"negative_count": 10, "threshold": 10, "exceeded": false, "near_threshold": true}
+      }
+    ]
+  },
+  "module_3_creative_details": {
+    "creatives": [
+      {
+        "creative_id": "ad_111",
+        "creative_name": "ROK_FB_RU_battle_v3",
+        "total": 11,
+        "positive": 1,
+        "neutral": 0,
+        "negative": 10,
+        "negative_rate": 0.9091,
+        "risk_level": "red"
+      },
+      {
+        "creative_id": "ad_222",
+        "creative_name": "ROK_FB_EN_clash_v1",
+        "total": 2,
+        "positive": 0,
+        "neutral": 1,
+        "negative": 1,
+        "negative_rate": 0.5,
+        "risk_level": "red"
+      },
+      {
+        "creative_id": "ad_333",
+        "creative_name": "ROK_FB_ES_burst_v2",
+        "total": 1,
+        "positive": 1,
+        "neutral": 0,
+        "negative": 0,
+        "negative_rate": 0.0,
+        "risk_level": "green"
+      }
+    ]
+  },
+  "module_4_tracking": {
+    "entries": []
+  },
+  "module_5_actions": {
+    "pause": [
+      {"creative_id": "ad_111", "reason": "negative_rate=0.91, risk=red, 建议暂停"},
+      {"creative_id": "ad_222", "reason": "negative_rate=0.50, risk=red, 建议暂停"}
+    ],
+    "scale": [],
+    "observe": []
+  }
+}

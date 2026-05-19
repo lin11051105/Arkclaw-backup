@@ -1,0 +1,52 @@
+# {{ project }} 素材衰退检测报告
+
+- 日期: {{ date }}
+- 目标 CPI: {{ target_cpi }}
+- 目标 ROI: {{ target_roi }}
+
+## 判定规则
+
+{{ formula }}
+
+## 衰退素材（建议暂停）
+
+{% if decayed %}
+| 素材ID | 素材名称 | 动作 | 衰退等级 | 连续衰退天数 | 上线天数 |
+|--------|---------|------|---------|------------|---------|
+{% for d in decayed %}
+| {{ d.material_id }} | {{ d.creative_name }} | {{ d.action }} | Level {{ d.decay_level or '-' }} | {{ d.consecutive_decay_days }} | {{ d.online_days }} |
+{% endfor %}
+{% else %}
+当前无素材触发衰退暂停条件。
+{% endif %}
+
+## 观察中素材
+
+{% if watching %}
+| 素材ID | 素材名称 | 衰退等级 | 连续衰退天数 |
+|--------|---------|---------|------------|
+{% for w in watching %}
+| {{ w.material_id }} | {{ w.creative_name }} | Level {{ w.decay_level or '-' }} | {{ w.consecutive_decay_days }} |
+{% endfor %}
+{% else %}
+无观察中素材。
+{% endif %}
+
+## 跳过素材（上线天数不足）
+
+{% if skipped %}
+| 素材ID | 素材名称 | 上线天数 | 原因 |
+|--------|---------|---------|------|
+{% for s in skipped %}
+| {{ s.material_id }} | {{ s.creative_name }} | {{ s.online_days }} | {{ s.reason }} |
+{% endfor %}
+{% else %}
+无跳过素材。
+{% endif %}
+
+## 汇总
+
+- 总评估: {{ (decayed | length) + (watching | length) + (skipped | length) }}
+- 衰退（暂停）: {{ decayed | length }}
+- 观察中: {{ watching | length }}
+- 跳过: {{ skipped | length }}

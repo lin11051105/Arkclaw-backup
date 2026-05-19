@@ -1,0 +1,165 @@
+# {{ meta.product }} 广告舆情日报
+
+- 渠道: {{ meta.channel }}
+- 窗口: {{ meta.window_start }} ~ {{ meta.window_end }}
+- 生成时间: {{ meta.generated_at }}
+
+---
+
+## 一、24h评论量级总览
+
+### 1.1 总量与对比
+
+| 维度 | 数量 | 占比 | vs昨日 | vs7日均值 |
+|------|-----:|-----:|-------:|---------:|
+| 总评论 | {{ module_1_volume.totals.total }} | 100% | {{ module_1_volume.totals.vs_yesterday_pct if module_1_volume.totals.vs_yesterday_pct is not none else '-' }}% | {{ module_1_volume.totals.vs_7d_avg_pct if module_1_volume.totals.vs_7d_avg_pct is not none else '-' }}% |
+{% if module_1_volume.totals.total > 0 %}
+| 积极 | {{ module_1_volume.totals.positive }} | {{ "%.0f"|format(module_1_volume.totals.positive / module_1_volume.totals.total * 100) }}% | - | - |
+| 中性 | {{ module_1_volume.totals.neutral }} | {{ "%.0f"|format(module_1_volume.totals.neutral / module_1_volume.totals.total * 100) }}% | - | - |
+| 负面 | {{ module_1_volume.totals.negative }} | {{ "%.0f"|format(module_1_volume.totals.negative / module_1_volume.totals.total * 100) }}% | - | - |
+{% endif %}
+
+### 1.2 分语种量级
+
+| 语种 | 总评论 | 积极 | 中性 | 负面 | 负面率 | vs7日均值 |
+|------|------:|----:|----:|----:|-------:|----------:|
+{% for row in module_1_volume.by_language %}
+| {{ row.language | upper }} | {{ row.total }} | {{ row.positive }} | {{ row.neutral }} | {{ row.negative }} | {{ "%.1f"|format(row.negative_rate * 100) }}% | {{ row.vs_7d_avg_pct if row.vs_7d_avg_pct is not none else '-' }} |
+{% endfor %}
+
+---
+
+## 二、24h舆情定性分析
+
+### 2.1 积极舆情主题
+
+{% if module_2_qualitative.positive_themes %}
+| 主题 | 数量 | 具体评论 | 主要来源素材 |
+|------|----:|----------|------------|
+{% for t in module_2_qualitative.positive_themes %}
+| {{ t.theme }} | {{ t.count }} | {{ (t.comments or []) | bullet_list }} | {{ t.source_creatives[:3] | join('、') }} |
+{% endfor %}
+{% else %}
+（无积极舆情）
+{% endif %}
+
+### 2.2 中性舆情主题
+
+{% if module_2_qualitative.neutral_themes %}
+| 主题 | 数量 | 具体评论 | 备注 |
+|------|----:|----------|------|
+{% for t in module_2_qualitative.neutral_themes %}
+| {{ t.theme }} | {{ t.count }} | {{ (t.comments or []) | bullet_list }} | - |
+{% endfor %}
+{% else %}
+（无典型中性舆情）
+{% endif %}
+
+### 2.3 负面舆情主题
+
+{% if module_2_qualitative.negative_themes %}
+| 主题分类 | 数量 | 具体评论 | 主要来源素材 | 主要语种 | 严重程度 |
+|----------|----:|----------|------------|---------|---------|
+{% for n in module_2_qualitative.negative_themes %}
+| {{ n.category }} | {{ n.count }} | {{ (n.comments or []) | bullet_list }} | {{ n.source_creatives[:3] | join('、') }} | {{ n.main_languages | join(', ') }} | {{ n.severity }} |
+{% endfor %}
+{% else %}
+（无负面舆情）
+{% endif %}
+
+### 2.4 重大舆情警报
+
+{% if module_2_qualitative.alerts %}
+| 警报类型 | 素材 | 关键信息 | 建议动作 |
+|----------|------|---------|---------|
+{% for a in module_2_qualitative.alerts %}
+{% if a.trigger_type == 'A_creative_negative_burst' %}
+| 单素材负面爆发 | {{ a.creative_id }} | 24h负面{{ a.evidence.negative_count }}条{% if a.evidence.near_threshold %}（接近阈值）{% endif %} | {% if a.evidence.exceeded %}立即暂停{% else %}加强监控{% endif %} |
+{% else %}
+| {{ a.trigger_type }} | {{ a.creative_id }} | - | - |
+{% endif %}
+{% endfor %}
+{% else %}
+今日无重大舆情
+{% endif %}
+
+---
+
+## 三、24h素材评论明细（按负面数倒序）
+
+{% for source_label, source_creatives in module_3_creative_details.by_source.items() %}
+### {{ source_label }}
+
+| 素材 | 主语种 | 评论总数 | 积极 | 中性 | 负面 | 负面率 | 负面主题TOP3 | 风险等级 |
+|------|-------|--------:|----:|----:|----:|-------:|------------|---------|
+{% for c in source_creatives %}
+| {{ c.label }} | {{ c.dominant_language | upper }} | {{ c.total }} | {{ c.positive }} | {{ c.neutral }} | {{ c.negative }} | {{ "%.1f"|format(c.negative_rate * 100) }}% | {{ c.negative_themes_top3 | join('、') if c.negative_themes_top3 else '-' }} | {{ c.risk_level }} |
+{% endfor %}
+
+{% endfor %}
+
+### 3.2 风险等级判定标准
+
+| 等级 | 标识 | 触发条件 | 含义 |
+|------|------|---------|------|
+| 红（暂停） | 🔴 | 负面≥15条 OR 负面率≥50%(样本≥20) OR 政治敏感 | 立即下线,<2h决策 |
+| 橙（24h暂停） | 🟠 | (负面10-14条AND样本<200) OR 负面率35-50%(样本≥20) OR 连续3天负面上升 | 24h内观察决策 |
+| 黄（监控） | 🟡 | (负面5-9条AND负面率≥20%) OR 已在跟踪列表 OR 负面率较7日均值翻倍 | 加强监控，准备方案 |
+| 灰（样本不足） | ⚪ | 评论总数<5条 | 数据不充分,仅记录 |
+| 绿（健康） | 🟢 | 负面<5条AND负面率<20%AND不在跟踪列表 | 正常投放 |
+| 星（亮点） | ⭐ | 积极率>60%AND总数≥20AND负面<5条 | 建议扩量 |
+
+---
+
+## 四、持续跟踪重点素材
+
+{% if module_4_tracking.entries %}
+| 素材ID | 素材名 | 进入日期 | 累计天数 | 累计负面数 | 趋势 | 处置建议 |
+|--------|-------|---------|--------:|---------:|------|---------|
+{% for e in module_4_tracking.entries %}
+{% set cumulative_neg = e.history | sum(attribute='negative') if e.history else 0 %}
+| {{ e.creative_id }} | {{ e.short_name or e.creative_id }} | {{ e.first_flagged_at }} | {{ e.days_tracked }} | {{ cumulative_neg }} | {{ e.trend }} | {% if e.trend == 'worsening' %}建议暂停{% elif e.trend == 'improving' %}继续观察{% elif e.trend == 'resolved' %}可退出跟踪{% else %}持续监控{% endif %} |
+{% endfor %}
+{% else %}
+（暂无重点跟踪素材）
+{% endif %}
+
+---
+
+## 五、建议动作清单
+
+### 5.1 🔴 立即暂停（{{ module_5_actions.pause | length }}）
+
+{% if module_5_actions.pause %}
+| 素材ID | 素材名 | 触发原因 | 数据支撑 |
+|--------|-------|---------|---------|
+{% for a in module_5_actions.pause %}
+| {{ a.creative_id }} | {{ a.short_name or a.creative_id }} | {{ a.reason }} | {{ a.data }} |
+{% endfor %}
+{% else %}
+无
+{% endif %}
+
+### 5.2 ⭐ 重点扩量（{{ module_5_actions.scale | length }}）
+
+{% if module_5_actions.scale %}
+| 素材ID | 素材名 | 触发原因 | 数据支撑 |
+|--------|-------|---------|---------|
+{% for a in module_5_actions.scale %}
+| {{ a.creative_id }} | {{ a.short_name or a.creative_id }} | {{ a.reason }} | {{ a.data }} |
+{% endfor %}
+{% else %}
+无
+{% endif %}
+
+### 5.3 🟡 持续观察（{{ module_5_actions.observe | length }}）
+
+{% if module_5_actions.observe %}
+| 素材ID | 素材名 | 关注点 | 下一步评估时间 |
+|--------|-------|--------|--------------|
+{% for a in module_5_actions.observe %}
+| {{ a.creative_id }} | {{ a.short_name or a.creative_id }} | {{ a.reason }} | 明日18:00 |
+{% endfor %}
+{% else %}
+无
+{% endif %}

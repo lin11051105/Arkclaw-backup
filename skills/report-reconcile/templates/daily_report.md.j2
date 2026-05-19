@@ -1,0 +1,73 @@
+# {{ project_id }} {{ {"daily": "日报", "weekly": "周报", "monthly": "月报"}.get(report_type, report_type) }}
+
+- 日期范围: {{ date_range[0] }} ~ {{ date_range[1] }}
+
+{% if report_type == "daily" %}
+## 核心指标
+
+| 指标 | 昨日值 | 前日值 | 日环比 | 7日均值 | 偏离 |
+|------|------:|------:|------:|-------:|-----:|
+| 消耗 | {{ "%.2f" | format(metrics.spend) }} | {{ "%.2f" | format(metrics.spend_prev) }} | {{ "%.1f" | format(metrics.spend_dod) }}% | {{ "%.2f" | format(metrics.get("spend_7d_avg", 0)) }} | {{ "%.1f" | format(metrics.spend_dev) }}% |
+| 安装 | {{ metrics.installs }} | {{ metrics.installs_prev }} | {{ "%.1f" | format(metrics.installs_dod) }}% | {{ "%.0f" | format(metrics.get("installs_7d_avg", 0)) }} | {{ "%.1f" | format(metrics.installs_dev) }}% |
+| CPI | {{ "%.2f" | format(metrics.cpi) }} | {{ "%.2f" | format(metrics.cpi_prev) }} | {{ "%.1f" | format(metrics.cpi_dod) }}% | {{ "%.2f" | format(metrics.get("cpi_7d_avg", 0)) }} | {{ "%.1f" | format(metrics.cpi_dev) }}% |
+| ROI | {{ "%.4f" | format(metrics.roi) }} | {{ "%.4f" | format(metrics.roi_prev) }} | {{ "%.1f" | format(metrics.roi_dod) }}% | {{ "%.4f" | format(metrics.get("roi_7d_avg", 0)) }} | {{ "%.1f" | format(metrics.roi_dev) }}% |
+| CTR | {{ "%.4f" | format(metrics.ctr) }} | {{ "%.4f" | format(metrics.get("ctr_prev", 0)) }} | {{ "%.1f" | format(metrics.get("ctr_dod", 0)) }}% | {{ "%.4f" | format(metrics.get("ctr_7d_avg", 0)) }} | {{ "%.1f" | format(metrics.get("ctr_dev", 0)) }}% |
+
+{% elif report_type == "weekly" %}
+## 本周汇总
+
+| 指标 | 本周 | 上周 | 周环比 | 月均值 |
+|------|-----:|-----:|------:|------:|
+| 消耗 | {{ "%.2f" | format(metrics.spend) }} | {{ "%.2f" | format(metrics.spend_prev_week) }} | {{ "%.1f" | format(metrics.spend_wow) }}% | {{ "%.2f" | format(metrics.get("spend_month_avg", 0)) }} |
+| 安装 | {{ metrics.installs }} | {{ metrics.installs_prev_week }} | {{ "%.1f" | format(metrics.installs_wow) }}% | {{ "%.0f" | format(metrics.get("installs_month_avg", 0)) }} |
+| CPI | {{ "%.2f" | format(metrics.cpi) }} | {{ "%.2f" | format(metrics.cpi_prev_week) }} | {{ "%.1f" | format(metrics.cpi_wow) }}% | {{ "%.2f" | format(metrics.get("cpi_month_avg", 0)) }} |
+| ROI | {{ "%.4f" | format(metrics.roi) }} | {{ "%.4f" | format(metrics.roi_prev_week) }} | {{ "%.1f" | format(metrics.roi_wow) }}% | {{ "%.4f" | format(metrics.get("roi_month_avg", 0)) }} |
+
+{% if inventory is defined %}
+## 素材库存
+
+- 可用素材: {{ inventory.get("usable_count", "-") }} 条（安全线: {{ inventory.get("safety_line", "-") }}）
+- 爆款素材: {{ inventory.get("winner_count", "-") }} 条（最低要求: {{ inventory.get("min_hot", "-") }}）
+- 本周新上线: {{ inventory.get("new_this_week", "-") }} 条
+- 本周关停: {{ inventory.get("paused_this_week", "-") }} 条
+{% endif %}
+
+{% elif report_type == "monthly" %}
+## 月度汇总
+
+| 指标 | 本月 | 上月 | 月环比 | 目标 | 达成率 |
+|------|-----:|-----:|------:|-----:|------:|
+| 消耗 | {{ "%.2f" | format(metrics.spend) }} | {{ "%.2f" | format(metrics.spend_prev_month) }} | {{ "%.1f" | format(metrics.spend_mom) }}% | {{ "%.2f" | format(metrics.get("spend_target", 0)) }} | {{ "%.1f" | format(metrics.get("spend_achieve", 0)) }}% |
+| 安装 | {{ metrics.installs }} | {{ metrics.installs_prev_month }} | {{ "%.1f" | format(metrics.installs_mom) }}% | {{ metrics.get("installs_target", "-") }} | {{ "%.1f" | format(metrics.get("installs_achieve", 0)) }}% |
+| CPI | {{ "%.2f" | format(metrics.cpi) }} | {{ "%.2f" | format(metrics.cpi_prev_month) }} | {{ "%.1f" | format(metrics.cpi_mom) }}% | {{ "%.2f" | format(metrics.get("cpi_target", 0)) }} | - |
+| ROI | {{ "%.4f" | format(metrics.roi) }} | {{ "%.4f" | format(metrics.roi_prev_month) }} | {{ "%.1f" | format(metrics.roi_mom) }}% | {{ "%.4f" | format(metrics.get("roi_target", 0)) }} | {{ "%.1f" | format(metrics.get("roi_achieve", 0)) }}% |
+
+{% if lifecycle is defined %}
+## 素材生命周期统计
+
+- 本月新上线: {{ lifecycle.get("new_this_month", "-") }} 条
+- 本月关停: {{ lifecycle.get("paused_this_month", "-") }} 条
+- 爆款素材: {{ lifecycle.get("winners_this_month", "-") }} 条
+- 素材平均生命周期: {{ lifecycle.get("avg_lifecycle_days", "-") }} 天
+{% endif %}
+
+{% endif %}
+
+{% if anomalies %}
+## 异常标注
+
+{% for a in anomalies %}
+- ⚠️ {{ a.description }}（偏离 {{ a.deviation }}%）
+{% endfor %}
+{% endif %}
+
+{% if creative_status is defined %}
+## 素材状态
+
+- 活跃素材: {{ creative_status.get("active", "-") }} 条
+- 昨日新增: {{ creative_status.get("new", "-") }} 条
+- 昨日关停: {{ creative_status.get("paused", "-") }} 条
+{% endif %}
+
+---
+数据截止: {{ date_range[1] }} | 来源: DAP + 各渠道广告平台

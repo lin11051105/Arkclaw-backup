@@ -1,0 +1,42 @@
+# {{ project_id }} 月度对账报告
+
+> ⚠️ 本结算单为 Agent 自动生成的草稿，需人工确认后方可作为最终结算依据。
+
+- 月份: {{ month }}
+- 汇率: 1 USD = {{ exchange_rate }} RMB
+
+## 渠道汇总
+
+| 项目 | 金额 |
+|------|------|
+| Facebook 消耗 (USD) | {{ "%.2f" | format(fb_total_spend_usd) }} |
+| Facebook 消耗 (RMB) | {{ "%.2f" | format(fb_total_spend_usd * exchange_rate) }} |
+| DAP 消耗 (RMB) | {{ "%.2f" | format(dap_total_spend_rmb) }} |
+| 差异合计 (RMB) | {{ "%.2f" | format(summary.total_diff_rmb) }} |
+| 差异率 | {{ "%.1f" | format(summary.get("total_diff_pct", 0)) }}% |
+| 匹配条数 | {{ matched_count }} |
+| 未匹配条数 | {{ unmatched_count }} |
+| 差异条数 | {{ discrepancy_items | length }} |
+
+{% if discrepancy_items %}
+## 差异明细
+
+| Campaign | FB消耗(RMB) | DAP消耗(RMB) | 差异(RMB) | 差异率 | 状态 |
+|----------|----------:|------------:|----------:|-------:|------|
+{% for d in discrepancy_items %}
+| {{ d.campaign_name }} | {{ "%.2f" | format(d.fb_spend_rmb) }} | {{ "%.2f" | format(d.dap_spend_rmb) }} | {{ "%.2f" | format(d.diff_rmb) }} | {{ "%.1f" | format(d.diff_pct) }}% | {{ d.status }} |
+{% endfor %}
+{% endif %}
+
+{% if coupon_items is defined and coupon_items %}
+## Coupon / 返点明细
+
+| 渠道 | 类型 | 金额 | 说明 |
+|------|------|-----:|------|
+{% for c in coupon_items %}
+| {{ c.channel }} | {{ c.type }} | {{ "%.2f" | format(c.amount) }} | {{ c.description }} |
+{% endfor %}
+{% endif %}
+
+---
+状态: **待人工确认**

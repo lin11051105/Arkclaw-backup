@@ -1,0 +1,259 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://ua-agent/sentiment-daily-report/report_schema.json",
+  "title": "Pgame Sentiment Daily Report",
+  "description": "Pgame 广告舆情日报输出契约。模块顺序严格对齐 PRD：1=24h量级总览, 2=24h定性分析(含2.4警报), 3=24h素材评论明细(按负面数倒序), 4=持续跟踪重点素材, 5=建议动作清单。",
+  "type": "object",
+  "required": [
+    "meta",
+    "module_1_volume",
+    "module_2_qualitative",
+    "module_3_creative_details",
+    "module_4_tracking",
+    "module_5_actions"
+  ],
+  "properties": {
+    "meta": {
+      "type": "object",
+      "required": ["product", "channel", "window_start", "window_end", "generated_at"],
+      "properties": {
+        "product": {"type": "string", "enum": ["Pgame"]},
+        "channel": {"type": "string", "enum": ["facebook"]},
+        "window_start": {"type": "string", "description": "ISO-8601 滚动 24h 起点（昨日 18:00）"},
+        "window_end": {"type": "string", "description": "ISO-8601 滚动 24h 终点（今日 18:00）"},
+        "generated_at": {"type": "string"},
+        "doc_url": {"type": ["string", "null"], "description": "飞书详细报告链接，简报附此跳转；publish 前为 null"},
+        "degradation_flag": {
+          "type": ["object", "null"],
+          "description": "分类器降级标志：claude CLI 失败/超时/JSON 解析异常时由 sentiment_classifier 写入；null 表示本次跑全部成功",
+          "properties": {
+            "is_degraded": {"type": "boolean"},
+            "reasons": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": ["timeout", "non_zero_returncode", "json_decode_error"]
+              }
+            },
+            "events": {"type": "integer", "minimum": 0}
+          }
+        }
+      }
+    },
+    "module_1_volume": {
+      "type": "object",
+      "description": "PRD 一、24h 评论量级总览",
+      "required": ["totals", "by_language"],
+      "properties": {
+        "totals": {
+          "type": "object",
+          "required": ["total", "positive", "neutral", "negative", "vs_yesterday_pct", "vs_7d_avg_pct"],
+          "properties": {
+            "total": {"type": "integer", "minimum": 0},
+            "positive": {"type": "integer", "minimum": 0},
+            "neutral": {"type": "integer", "minimum": 0},
+            "negative": {"type": "integer", "minimum": 0},
+            "vs_yesterday_pct": {"type": ["number", "null"]},
+            "vs_7d_avg_pct": {"type": ["number", "null"]}
+          }
+        },
+        "by_language": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["language", "total", "positive", "neutral", "negative", "negative_rate"],
+            "properties": {
+              "language": {"type": "string"},
+              "total": {"type": "integer", "minimum": 0},
+              "positive": {"type": "integer", "minimum": 0},
+              "neutral": {"type": "integer", "minimum": 0},
+              "negative": {"type": "integer", "minimum": 0},
+              "negative_rate": {"type": "number", "minimum": 0, "maximum": 1},
+              "vs_7d_avg_pct": {"type": ["number", "null"]}
+            }
+          }
+        }
+      }
+    },
+    "module_2_qualitative": {
+      "type": "object",
+      "description": "PRD 二、24h 舆情定性分析（含 2.4 重大舆情警报）",
+      "required": ["positive_themes", "neutral_themes", "negative_themes", "alerts"],
+      "properties": {
+        "positive_themes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["theme", "count", "source_creatives"],
+            "properties": {
+              "theme": {
+                "type": "string",
+                "description": "Closed enum — must match config.CANONICAL_THEMES",
+                "enum": [
+                  "graphics_praise",
+                  "gameplay_praise",
+                  "general_praise",
+                  "download_question",
+                  "gameplay_question",
+                  "ad_overpromise",
+                  "value_misalign",
+                  "technical_issue",
+                  "general_complaint",
+                  "graphics_complaint",
+                  "unclassified",
+                  "other"
+                ]
+              },
+              "count": {"type": "integer", "minimum": 0},
+              "source_creatives": {"type": "array", "items": {"type": "string"}},
+              "comments": {
+                "type": "array",
+                "description": "PDF 2.1『具体评论』列：该主题下所有评论原文（不截断）。可选字段，旧 fixture 兼容。",
+                "items": {"type": "string"}
+              }
+            }
+          }
+        },
+        "neutral_themes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["theme", "count", "source_creatives"],
+            "properties": {
+              "theme": {
+                "type": "string",
+                "description": "Closed enum — must match config.CANONICAL_THEMES",
+                "enum": [
+                  "graphics_praise",
+                  "gameplay_praise",
+                  "general_praise",
+                  "download_question",
+                  "gameplay_question",
+                  "ad_overpromise",
+                  "value_misalign",
+                  "technical_issue",
+                  "general_complaint",
+                  "graphics_complaint",
+                  "unclassified",
+                  "other"
+                ]
+              },
+              "count": {"type": "integer", "minimum": 0},
+              "source_creatives": {"type": "array", "items": {"type": "string"}},
+              "comments": {
+                "type": "array",
+                "description": "PDF 2.2『具体评论』列：该主题下所有评论原文（不截断）。可选字段。",
+                "items": {"type": "string"}
+              }
+            }
+          }
+        },
+        "negative_themes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["category", "count", "source_creatives", "main_languages", "severity"],
+            "properties": {
+              "category": {
+                "type": "string",
+                "description": "Closed enum — must match config.CANONICAL_THEMES",
+                "enum": [
+                  "graphics_praise",
+                  "gameplay_praise",
+                  "general_praise",
+                  "download_question",
+                  "gameplay_question",
+                  "ad_overpromise",
+                  "value_misalign",
+                  "technical_issue",
+                  "general_complaint",
+                  "graphics_complaint",
+                  "unclassified",
+                  "other"
+                ]
+              },
+              "count": {"type": "integer", "minimum": 0},
+              "source_creatives": {"type": "array", "items": {"type": "string"}},
+              "main_languages": {"type": "array", "items": {"type": "string"}},
+              "severity": {"type": "string", "enum": ["low", "medium", "high", "critical"]},
+              "comments": {
+                "type": "array",
+                "description": "PDF 2.3『具体评论』列：该负面分类下所有评论原文（不截断）。可选字段。",
+                "items": {"type": "string"}
+              }
+            }
+          }
+        },
+        "alerts": {
+          "type": "array",
+          "description": "PRD 2.4 重大舆情警报：A=单素材负面>10 / C=占位（NotImplementedTrigger）",
+          "items": {
+            "type": "object",
+            "required": ["trigger_type", "creative_id", "evidence"],
+            "properties": {
+              "trigger_type": {"type": "string", "enum": ["A_creative_negative_burst", "C_not_implemented"]},
+              "creative_id": {"type": "string"},
+              "evidence": {"type": "object"}
+            }
+          }
+        }
+      }
+    },
+    "module_3_creative_details": {
+      "type": "object",
+      "description": "PRD 三、24h 素材评论明细（按负面数倒序 + 风险等级）",
+      "required": ["creatives"],
+      "properties": {
+        "creatives": {
+          "type": "array",
+          "description": "已按 negative_count DESC 排序",
+          "items": {
+            "type": "object",
+            "required": ["creative_id", "creative_name", "total", "positive", "neutral", "negative", "risk_level"],
+            "properties": {
+              "creative_id": {"type": "string"},
+              "creative_name": {"type": "string"},
+              "total": {"type": "integer", "minimum": 0},
+              "positive": {"type": "integer", "minimum": 0},
+              "neutral": {"type": "integer", "minimum": 0},
+              "negative": {"type": "integer", "minimum": 0},
+              "negative_rate": {"type": "number", "minimum": 0, "maximum": 1},
+              "risk_level": {"type": "string", "enum": ["red", "yellow", "green", "star"]}
+            }
+          }
+        }
+      }
+    },
+    "module_4_tracking": {
+      "type": "object",
+      "description": "PRD 四、持续跟踪重点素材",
+      "required": ["entries"],
+      "properties": {
+        "entries": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["creative_id", "first_flagged_at", "days_tracked", "trend"],
+            "properties": {
+              "creative_id": {"type": "string"},
+              "first_flagged_at": {"type": "string"},
+              "days_tracked": {"type": "integer", "minimum": 0},
+              "trend": {"type": "string", "enum": ["worsening", "stable", "improving", "resolved"]},
+              "history": {"type": "array"}
+            }
+          }
+        }
+      }
+    },
+    "module_5_actions": {
+      "type": "object",
+      "description": "PRD 五、建议动作清单",
+      "required": ["pause", "scale", "observe"],
+      "properties": {
+        "pause": {"type": "array", "items": {"type": "object", "required": ["creative_id", "reason"]}},
+        "scale": {"type": "array", "items": {"type": "object", "required": ["creative_id", "reason"]}},
+        "observe": {"type": "array", "items": {"type": "object", "required": ["creative_id", "reason"]}}
+      }
+    }
+  }
+}

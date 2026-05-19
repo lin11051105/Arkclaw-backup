@@ -1,0 +1,25 @@
+# {{ project_id }} 素材短名汇总
+
+- 日期范围: {{ date_range.start }} ~ {{ date_range.end }}
+
+## 短名聚合
+
+{% if by_short_name %}
+| 短名 | 素材数 | 总曝光 | 总点击 | 总安装 | 总消耗 | CTR% | CPI | ROI |
+|------|------:|------:|------:|------:|------:|-----:|----:|----:|
+{% for row in by_short_name %}
+| {{ row.short_name }} | {{ row.material_count }} | {{ row.total_impressions }} | {{ row.total_clicks }} | {{ row.total_installs }} | {{ "%.2f" | format(row.total_spend) }} | {{ "%.2f" | format(row.ctr) }} | {{ "%.2f" | format(row.cpi) }} | {{ "%.2f" | format(row.roi) }} |
+{% endfor %}
+{% else %}
+无数据。
+{% endif %}
+
+## 汇总
+
+{% if by_short_name %}
+- 短名总数: {{ by_short_name | length }}
+{% set total_spend = by_short_name | map(attribute='total_spend') | sum %}
+{% set total_installs = by_short_name | map(attribute='total_installs') | sum %}
+- 总消耗: {{ "%.2f" | format(total_spend) }}
+- 总安装: {{ total_installs }}
+{% endif %}

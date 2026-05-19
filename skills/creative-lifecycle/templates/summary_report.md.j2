@@ -1,0 +1,29 @@
+# {{ project }} 素材数据汇总
+
+- 日期范围: {{ date_range.start }} ~ {{ date_range.end }}
+
+## 素材明细
+
+{% if summary %}
+| 素材名称 | 曝光 | 点击 | 安装 | 收入 | 消耗 | CTR% | CPI | ROI |
+|---------|------|------|------|------|------|------|-----|-----|
+{% for s in summary %}
+| {{ s.short_name or s.material_name }} | {{ s.impressions }} | {{ s.clicks }} | {{ s.installs }} | {{ "%.2f" | format(s.revenue) }} | {{ "%.2f" | format(s.spend) }} | {{ "%.2f" | format(s.ctr) }} | {{ "%.2f" | format(s.cpi) }} | {{ "%.2f" | format(s.roi) }} |
+{% endfor %}
+{% else %}
+无素材数据。
+{% endif %}
+
+## 汇总统计
+
+{% if summary %}
+{% set total_spend = summary | map(attribute='spend') | sum %}
+{% set total_installs = summary | map(attribute='installs') | sum %}
+{% set total_impressions = summary | map(attribute='impressions') | sum %}
+{% set total_clicks = summary | map(attribute='clicks') | sum %}
+- 素材总数: {{ summary | length }}
+- 总消耗: {{ "%.2f" | format(total_spend) }}
+- 总安装: {{ total_installs }}
+- 总曝光: {{ total_impressions }}
+- 总点击: {{ total_clicks }}
+{% endif %}
